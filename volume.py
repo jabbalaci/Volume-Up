@@ -46,10 +46,15 @@ Laszlo Szathmary, alias Jabba Laci, 2016, jabba.laci@gmail.com
 
 import os
 import re
+import socket
 import sys
 from subprocess import PIPE, STDOUT, Popen
 
 SINK_NUMBER = 0
+
+if socket.gethostname() == 'kolibri':
+    SINK_NUMBER = 1
+
 HUNDRED_PERCENT = 65536
 MAX_PERCENT = 200    # prevent speaker explosion
 
@@ -80,12 +85,19 @@ def get_volume():
     cmd = "pacmd list-sinks {n}".format(n=SINK_NUMBER)
     lines = get_cmd_output(cmd)
 
+    pattern = "index: {n}".format(n=SINK_NUMBER)
+    found = False
+
     for line in lines:
         line = line.decode("utf-8")
-        if "volume: front" in line:
-            line = line.split()
-            vol = int(line[2])
-            return (vol, volume2percent(vol))
+        if pattern in line:
+            found = True
+
+        if found:
+            if "volume: front" in line:
+                line = line.split()
+                vol = int(line[2])
+                return (vol, volume2percent(vol))
 
 
 def set_volume(new_percent):
