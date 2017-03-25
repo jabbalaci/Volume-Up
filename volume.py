@@ -52,7 +52,7 @@ from subprocess import PIPE, STDOUT, Popen
 
 SINK_NUMBER = 0
 
-if socket.gethostname() in ['kolibri', 'toshiba']:
+if socket.gethostname() in ['toshiba']:
     SINK_NUMBER = 1
 
 HUNDRED_PERCENT = 65536
